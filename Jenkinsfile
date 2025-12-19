@@ -12,6 +12,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/ramky3064/ottbackend.git',
+                    credentialsId: 'github-pat'
             }
         }
 
