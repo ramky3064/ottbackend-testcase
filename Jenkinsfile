@@ -34,11 +34,21 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy using Ansible') {
+            steps {
+                bat '''
+                wsl ansible-playbook \
+                -i ansible/inventory.ini \
+                ansible/deploy.yml
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo '✅ Build & SonarQube analysis successful!'
+            echo '✅ Build, Quality Check & Deployment successful!'
         }
         failure {
             echo '❌ Pipeline failed!'
