@@ -38,8 +38,8 @@ pipeline {
         stage('Deploy using Ansible') {
             steps {
                 bat '''
-                wsl ansible-playbook \
-                -i ansible/inventory.ini \
+                wsl ansible-playbook 
+                -i ansible/inventory.ini 
                 ansible/deploy.yml
                 '''
             }
