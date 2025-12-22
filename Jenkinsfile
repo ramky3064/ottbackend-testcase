@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk-17'
+        jdk 'JDK17'
         gradle 'Gradle'
     }
 
@@ -11,59 +11,37 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/ramky3064/ottbackend.git',
-                    credentialsId: 'github-pat'
+                    url: 'https://github.com/Vivek45-sys/New-OTT-Backend.git'
+            }
+        }
+
+        stage('Gradle Clean') {
+            steps {
+                bat 'gradle clean'
             }
         }
 
         stage('Build & Test') {
             steps {
-                bat 'gradle clean test'
+                bat 'gradle build'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('LocalSonar') {
-                    bat """
-                    gradle sonar \
-                    -Dsonar.projectKey=my-project \
-                    -Dsonar.projectName=my-project
-                    """
+                    bat 'gradle sonar'
                 }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
-        stage('Build Artifact') {
-            steps {
-                bat 'gradle build'
-            }
-        }
-
-        stage('Deploy with Ansible') {
-            steps {
-                bat '''
-                cd ansible
-                ansible-playbook ansible/deploy.yml
-                '''
             }
         }
     }
 
     post {
         success {
-            echo '✅ Pipeline completed successfully'
+            echo '✅ Build & SonarQube analysis successful!'
         }
         failure {
-            echo '❌ Pipeline failed'
+            echo '❌ Pipeline failed!'
         }
     }
 }
