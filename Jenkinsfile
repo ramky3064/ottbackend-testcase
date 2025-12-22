@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'JDK17'
+        jdk 'jdk-17'
         gradle 'Gradle'
     }
 
@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Vivek45-sys/New-OTT-Backend.git'
+                    url: 'https://github.com/ramky3064/ottbackend-testcase.git'
             }
         }
 
@@ -29,7 +29,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('LocalSonar') {
+                withSonarQubeEnv('SonarQube') {
                     bat 'gradle sonar'
                 }
             }
