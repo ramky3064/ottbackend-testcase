@@ -1,55 +1,35 @@
 pipeline {
     agent any
- 
+
     tools {
-        jdk 'jdk-17'
+        jdk 'JDK17'
         gradle 'Gradle'
     }
- 
+
     stages {
- 
-        stage('Checkout Code') {
+
+        stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/ramky3064/ottbackend-testcase.git'
+                checkout scm
             }
         }
- 
-        stage('Gradle Clean') {
+
+        stage('Build') {
             steps {
-                bat 'gradle clean'
+                bat 'gradle clean build'
             }
         }
- 
-        stage('Build & Test') {
-            steps {
-                bat 'gradle build'
-            }
-        }
- 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat 'gradle sonar'
-                }
-            }
-        }
- 
-        stage('Deploy using Ansible') {
+
+        stage('Deploy') {
             steps {
                 bat '''
-                wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml
+                echo Deploying application...
+                mkdir C:\\apps\\ott-backend 2>nul
+                copy /Y build\\libs\\*.jar C:\\apps\\ott-backend\\ott-backend.jar
+                start "" java -jar C:\\apps\\ott-backend\\ott-backend.jar
                 '''
             }
         }
-    }
- 
-    post {
-        success {
-            echo '✅ Build, Quality Check & Deployment successful!'
-        }
-        failure {
-            echo '❌ Pipeline failed!'
-        }
+
     }
 }
