@@ -6,6 +6,10 @@ pipeline {
         gradle 'Gradle'
     }
 
+    environment {
+        SONAR_SCANNER_OPTS = "-Xmx512m"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -20,6 +24,20 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    bat '''
+                    gradle sonarqube ^
+                      -Dsonar.projectKey=ott-backend ^
+                      -Dsonar.projectName=ott-backend ^
+                      -Dsonar.host.url=http://localhost:9000 ^
+                      -Dsonar.login=%SONAR_AUTH_TOKEN%
+                    '''
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 bat '''
@@ -30,6 +48,5 @@ pipeline {
                 '''
             }
         }
-
     }
 }
