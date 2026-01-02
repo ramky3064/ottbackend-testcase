@@ -40,15 +40,14 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                bat '''
-                echo Deploying application...
-                mkdir C:\\apps\\ott-backend 2>nul
-                copy /Y build\\libs\\*.jar C:\\apps\\ott-backend\\ott-backend.jar
-                start "" java -jar C:\\apps\\ott-backend\\ott-backend.jar
-                '''
-            }
-        }
+stage('Deploy with Ansible') {
+    steps {
+        bat '''
+        echo Running Ansible Deployment...
+        wsl ansible-playbook %ANSIBLE_PLAYBOOK% -i ansible/inventory.ini ^
+        --extra-vars "workspace=%WORKSPACE%"
+        '''
+    }
+}
     }
 }
