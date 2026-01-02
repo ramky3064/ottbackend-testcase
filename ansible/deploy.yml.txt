@@ -1,0 +1,6 @@
+- name: Deploy OTT Backend
+  hosts: local
+  gather_facts: no
+
+  roles:
+    - app
