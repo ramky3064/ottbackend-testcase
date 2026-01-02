@@ -1,6 +1,6 @@
-- name: Deploy OTT Backend
-  hosts: local
-  gather_facts: no
+- hosts: local
+  gather_facts: yes
+  tasks:
+    - debug:
+        msg: "Deploying to local machine"
 
-  roles:
-    - app
