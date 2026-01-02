@@ -7,7 +7,9 @@ pipeline {
     }
 
     environment {
-        SONAR_SCANNER_OPTS = "-Xmx512m"
+        SONAR_PROJECT_KEY  = 'ott-backend'
+        SONAR_PROJECT_NAME = 'ott-backend'
+        ANSIBLE_PLAYBOOK   = 'ansible/deploy.yml'
     }
 
     stages {
