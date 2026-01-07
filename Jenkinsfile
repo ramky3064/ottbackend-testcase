@@ -34,7 +34,7 @@ pipeline {
                       -Dsonar.projectKey=ott-backend ^
                       -Dsonar.projectName=ott-backend ^
                       -Dsonar.host.url=http://localhost:9000 ^
-                      -Dsonar.token==%SONAR_AUTH_TOKEN%
+                      -Dsonar.token=%SONAR_AUTH_TOKEN%
                     '''
                 }
             }
