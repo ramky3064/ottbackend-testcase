@@ -1,26 +1,30 @@
 pipeline {
     agent any
+
     tools {
         jdk 'jdk-21'
         gradle 'Gradle'
     }
+
     environment {
         SONAR_PROJECT_KEY  = 'ott-backend'
         SONAR_PROJECT_NAME = 'ott-backend'
-        ANSIBLE_PLAYBOOK   = 'ansible/deploy.yml'
     }
+
     stages {
-                        stage('Checkout') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-    stage('Build') {
+
+        stage('Build') {
             steps {
                 bat 'gradle clean build'
             }
         }
-  stage('SonarQube Analysis') {
+
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     bat '''
@@ -33,14 +37,5 @@ pipeline {
                 }
             }
         }
-stage('Deploy with Ansible') {
-    steps {
-        bat '''
-        echo Running Ansible Deployment...
-        wsl ansible-playbook %ANSIBLE_PLAYBOOK% -i ansible/inventory.ini ^
-        --extra-vars "workspace=%WORKSPACE%"
-        '''
-    }
-}
     }
 }
