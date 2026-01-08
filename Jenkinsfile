@@ -4,7 +4,7 @@ pipeline {
     // Ensure tools are defined
     tools {
         jdk 'jdk-21'           // Must match JDK configured in Jenkins Global Tool Configuration
-        gradle 'gradle-8.5'    // Use your Gradle installation name
+        Gradle 'gradle-8.5'    // Use your Gradle installation name
     }
 
     environment {
