@@ -28,11 +28,11 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     bat '''
-                    gradle sonarqube ^
+                    gradle sonar ^
                       -Dsonar.projectKey=ott-backend ^
                       -Dsonar.projectName=ott-backend ^
                       -Dsonar.host.url=http://localhost:9000 ^
-                      -Dsonar.login=%sonarqube-auth-token%
+                      -Dsonar.token=%sonar-auth-token%
                     '''
                 }
             }
