@@ -2,10 +2,16 @@ plugins {
     id 'java'
     id 'org.sonarqube' version '4.4.1.3373'
 }
- 
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 group = 'com.example'
 version = '1.0.0'
- 
+
 repositories {
     mavenCentral()
 }
