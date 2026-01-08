@@ -34,7 +34,8 @@ pipeline {
                       -Dsonar.projectKey=ott-backend ^
                       -Dsonar.projectName=ott-backend ^
                       -Dsonar.host.url=http://localhost:9000 ^
-                      -Dsonar.token=%SONAR_AUTH_TOKEN%
+                      -Dsonar.token=squ_70491f9364cadd2d1171d8256653ff9a2bcf3bc6\
+                      -Dsonar.gradle.skipCompile=true
                     '''
                 }
             }
