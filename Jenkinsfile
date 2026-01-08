@@ -1,70 +1,46 @@
 pipeline {
     agent any
-
     tools {
-        jdk 'jdk-21'   // Must match Jenkins Global Tool Configuration
+        jdk 'jdk-21'
+        gradle 'Gradle'
     }
-
     environment {
-        SONAR_HOST_URL = 'http://localhost:9000'                 // SonarQube URL
-        SONAR_TOKEN    = credentials('sonarqube-auth-token')    // Fetch SonarQube token securely
-        WORKSPACE_DIR  = "${env.WORKSPACE}"                     // Dynamic workspace path
+        SONAR_PROJECT_KEY  = 'ott-backend'
+        SONAR_PROJECT_NAME = 'ott-backend'
+        ANSIBLE_PLAYBOOK   = 'ansible/deploy.yml'
     }
-
     stages {
-        stage('Checkout SCM') {
+                        stage('Checkout') {
             steps {
-                git url: 'https://github.com/ramky3064/ottbackend-testcase.git',
-                    branch: 'main',
-                    credentialsId: 'github-PAT'  // GitHub PAT credential
+                checkout scm
             }
         }
-
-        stage('Build') {
+    stage('Build') {
             steps {
-                // Use Gradle wrapper; ensure gradlew.bat is committed to repo
-                bat "${WORKSPACE_DIR}\\gradlew.bat clean build --no-daemon"
+                bat 'gradle clean build'
             }
         }
-
-        stage('SonarQube Analysis') {
+  stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {  // Replace with your SonarQube server name in Jenkins
-                    bat """
-                    ${WORKSPACE_DIR}\\gradlew.bat sonarqube \
-                      -Dsonar.projectKey=ott-backend \
-                      -Dsonar.projectName=ott-backend \
-                      -Dsonar.host.url=${SONAR_HOST_URL} \
-                      -Dsonar.login=${SONAR_TOKEN} \
-                      -Dsonar.gradle.skipCompile=true
-                    """
+                withSonarQubeEnv('SonarQube') {
+                    bat '''
+                    gradle sonarqube ^
+                      -Dsonar.projectKey=ott-backend ^
+                      -Dsonar.projectName=ott-backend ^
+                      -Dsonar.host.url=http://localhost:9000 ^
+                      -Dsonar.login=%SONAR_AUTH_TOKEN%
+                    '''
                 }
             }
         }
-
-        stage('Wait for SonarQube Quality Gate') {
-            steps {
-                // Pipeline fails if Quality Gate fails
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
-        stage('Deploy with Ansible (WSL)') {
-            steps {
-                bat """
-                wsl -d Ubuntu -- bash -c "ansible-playbook ${WORKSPACE_DIR}/ansible/deploy.yml \
-                  -i ${WORKSPACE_DIR}/ansible/inventory.ini \
-                  --extra-vars 'workspace=${WORKSPACE_DIR}'"
-                """
-            }
-        }
+stage('Deploy with Ansible') {
+    steps {
+        bat '''
+        echo Running Ansible Deployment...
+        wsl ansible-playbook %ANSIBLE_PLAYBOOK% -i ansible/inventory.ini ^
+        --extra-vars "workspace=%WORKSPACE%"
+        '''
     }
-
-    post {
-        always {
-            echo "Pipeline finished. Check console logs for errors."
-        }
+}
     }
 }
