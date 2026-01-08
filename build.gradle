@@ -23,13 +23,3 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-
-sonarqube {
-    properties {
-        property "sonar.projectKey", "ott-backend"
-        property "sonar.projectName", "ott-backend"
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.sources", "src/main/java"
-        property "sonar.java.binaries", "build/classes"
-    }
-}
